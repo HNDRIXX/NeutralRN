@@ -1,16 +1,20 @@
+import React from 'react'
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useContext } from 'react'
-import Context from '../context/Context';
 import { Colors } from '../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
+import { handleSuccess } from '../redux/slices/defaultSlice';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+
 export default function DonePrompt() {
-    const { isSuccess, handleSuccess } = useContext(Context)
+    const { isSuccess } = useAppSelector((state) => state.default);
+    
     const navigation: any = useNavigation();
+    const dispatch = useAppDispatch();
 
     const handleButtonPress = () => {
-        handleSuccess();
+        dispatch(handleSuccess());
         navigation.replace('Home');
     }
 
@@ -19,10 +23,10 @@ export default function DonePrompt() {
             visible={isSuccess}
             transparent={true}
             animationType="fade"
-            onRequestClose={handleSuccess}
+            onRequestClose={() => dispatch(handleSuccess())}
         >
             <TouchableOpacity
-                onPress={handleSuccess}
+                onPress={() => dispatch(handleSuccess())}
                 style={styles.container}
             >
                 <View style={styles.wrapper}>

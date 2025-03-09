@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './src/app/Home';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ContextProvider } from './src/context/Context';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store';
 import Form from './src/app/Form';
 import { Fonts } from './src/constants/Fonts';
 
@@ -17,7 +18,7 @@ export default function App() {
   }
 
   return (
-    <ContextProvider>
+    <Provider store={store}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar style='dark' />
         <NavigationContainer>
@@ -33,6 +34,6 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
-    </ContextProvider>
+    </Provider>
   );
 }

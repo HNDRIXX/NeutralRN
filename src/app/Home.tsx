@@ -2,12 +2,17 @@ import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ActivityIndi
 import React, { useContext, useEffect } from 'react'
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '../constants/Colors'
-import Context from '../context/Context';
 import DeletePrompt from '../components/DeletePrompt';
 import DonePrompt from '../components/DonePrompt';
+import { fetchData } from '../redux/slices/dataSlice';
+import defaultSlice from '../redux/slices/defaultSlice';
+import { handleDeletePrompt } from '../redux/slices/defaultSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 export default function Home({ navigation }: any) {
-    const { data, handleShow, isLoading, fetchData, isFetching } = useContext(Context);
+    const { data, loading, error } = useAppSelector((state) => state.data);
+    
+    const dispatch = useAppDispatch();
 
     const handleEditPress = (item: any) => {
         navigation.navigate('Form', { type: 'edit', data: item });
@@ -21,9 +26,9 @@ export default function Home({ navigation }: any) {
         navigation.navigate('Form', { type: 'create' });
     }
 
-    // useEffect(() => {
-    //     fetchData();
-    // }, []);
+    useEffect(() => {
+        dispatch(fetchData());
+    }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: '#fff'  }}>
@@ -47,14 +52,14 @@ export default function Home({ navigation }: any) {
                 <Text style={styles.createButtonText}>Create new data</Text>
             </TouchableOpacity>
 
-            {isFetching ? (
+            {loading ? (
                 <ActivityIndicator color={Colors.primary} size={'small'} style={{ padding: 20, marginTop: 20 }} />
             ) : (
                 <FlatList
                     keyExtractor={(item, index) => index.toString()}
                     data={data}
-                    onRefresh={fetchData}
-                    refreshing={isLoading}
+                    onRefresh={() => dispatch(fetchData())}
+                    refreshing={false}
                     renderItem={({ item }) => (
                         <View style={styles.itemContainer}>
                             <TouchableOpacity 
@@ -73,7 +78,7 @@ export default function Home({ navigation }: any) {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    onPress={() => handleShow(item?._id)}
+                                    onPress={() => dispatch(handleDeletePrompt(item?.id))}
                                 >
                                     <FontAwesome6 name="trash-alt" size={22} color={Colors.lightGray} />
                                 </TouchableOpacity>

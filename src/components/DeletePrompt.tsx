@@ -1,21 +1,25 @@
+import React from 'react'
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useContext } from 'react'
-import Context from '../context/Context';
 import { Colors } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 
+import { handleDeletePrompt } from '../redux/slices/defaultSlice';
+import { deleteData } from '../redux/slices/deleteSlice';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+
 export default function DeletePrompt() {
-    const { isShow, handleShow, handleDeleteSubmit } = useContext(Context)
+    const { isDeletePrompt } = useAppSelector((state) => state.default);
+    const dispatch = useAppDispatch();
 
     return (
         <Modal
-            visible={isShow}
+            visible={isDeletePrompt}
             transparent={true}
             animationType="fade"
-            onRequestClose={() => handleShow()}
+            onRequestClose={() => dispatch(handleDeletePrompt())}
         >
             <TouchableOpacity 
-                onPress={() => handleShow()} 
+                onPress={() => handleDeletePrompt()} 
                 style={styles.container}
             >
                 <View style={styles.wrapper}>
@@ -27,7 +31,7 @@ export default function DeletePrompt() {
 
                     <View style={styles.buttonWrapper}>
                         <TouchableOpacity 
-                            onPress={() => handleShow()}
+                            onPress={() => dispatch(handleDeletePrompt())}
                             style={styles.noButton}
                         >
                             <Text style={styles.noText}>
@@ -36,7 +40,7 @@ export default function DeletePrompt() {
                         </TouchableOpacity>
                         
                         <TouchableOpacity 
-                            onPress={handleDeleteSubmit}
+                            onPress={() => dispatch(deleteData())}
                             style={styles.yesButton}
                         >
                             <Text style={styles.yesText}>
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(110, 110, 110, 0.19)',
+        backgroundColor: 'rgba(110, 110, 110, 0.42)',
     },
 
     wrapper: {

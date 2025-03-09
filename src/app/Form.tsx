@@ -2,16 +2,15 @@ import { View, Text, TextInput, Image, StyleSheet, ScrollView, TouchableOpacity 
 import React, { useContext, useState } from 'react'
 import { Colors } from '../constants/Colors'
 import BackButton from '../components/BackButton'
-import Context from '../context/Context'
 import DonePrompt from '../components/DonePrompt'
+import { useAppDispatch } from '../redux/hooks'
+import { createData } from '../redux/slices/createSlice'
+import { updateData } from '../redux/slices/updateSlice'
+import { handleDeletePrompt } from '../redux/slices/defaultSlice'
 
 export default function Form({ navigation, route }: any) {
     const { data, type } = route.params
-    const { 
-        handleCreateSubmit, 
-        handleUpdateSubmit,
-        handleShow,
-    } = useContext(Context);
+    const dispatch = useAppDispatch();
 
     const [fieldData, setFieldData] = useState(() => ({
         name: data?.name ?? '',
@@ -97,7 +96,7 @@ export default function Form({ navigation, route }: any) {
             {type == 'view' ? (
                 <TouchableOpacity
                     style={styles.deleteButton}
-                    onPress={() => handleShow(data?._id)}
+                    onPress={() => dispatch(handleDeletePrompt(data?._id))}
                 >
                     <Text style={styles.buttonText}>DELETE</Text>
                 </TouchableOpacity>
@@ -108,9 +107,9 @@ export default function Form({ navigation, route }: any) {
                         style={styles.submitButton}
                         onPress={() => {
                             if (type === 'create') {
-                                handleCreateSubmit(fieldData);
+                                dispatch(createData(fieldData));
                             } else if (type === 'edit') {
-                                handleUpdateSubmit(data?._id, fieldData);
+                                dispatch(updateData({ id: data?._id, data: fieldData }));
                             }
                         }}
                     >
